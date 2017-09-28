@@ -15,7 +15,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 	}
 
 	// we always insert publisher with their names , so name cannot be null
-	// in the UI implementation we always check for it not to null
+	// in the UI implementation we always check for it not to be null
 	public void savePublisher(Publisher publisher) throws SQLException {
 
 		if (publisher.getPublisherAddress() == null && publisher.getPublisherPhone() == null)
@@ -38,7 +38,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 
 	public Integer savePublisherID(Publisher publisher) throws SQLException {
 
-		if (publisher.getPublisherAddress() == null && publisher.getPublisherAddress() == null)
+		if (publisher.getPublisherAddress() == null && publisher.getPublisherPhone() == null)
 			return saveWithID("INSERT INTO tbl_publisher (publisherName) VALUES (?)",
 					new Object[] { publisher.getPublisherName() });
 

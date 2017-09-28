@@ -20,7 +20,7 @@ public class GenreDAO extends BaseDAO<Genre> {
 	}
 
 	public Integer saveGenreWithID(Genre genre) throws SQLException {
-		return saveWithID("INSERT INTO tbl_genre () VALUES (genre_name)", new Object[] { genre.getGenreName() });
+		return saveWithID("INSERT INTO tbl_genre () VALUES (?)", new Object[] { genre.getGenreName() });
 	}
 
 	public void saveBookGenre(Genre genre) throws SQLException {
