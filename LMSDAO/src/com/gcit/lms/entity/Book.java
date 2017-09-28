@@ -43,7 +43,7 @@ public class Book implements Serializable {
 		return publisher;
 	}
 	/**
-	 * @param publisher the publisher to set
+	 * @param  the publisher to set
 	 */
 	public void setPublisher(Publisher publisher) {
 		this.publisher = publisher;
