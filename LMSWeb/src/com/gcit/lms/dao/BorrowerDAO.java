@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gcit.lms.entity.Borrower;
+ 
 
 public class BorrowerDAO extends BaseDAO<Borrower> {
 
@@ -87,10 +88,17 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 
 		return readAll("SELECT * FROM tbl_borrower WHERE phone =  ?", new Object[] { phone });
 	}
+	
+	public List<Borrower> readBorrowerByPK(int cardNo) throws SQLException {
+		
+		return readAll("SELECT * FROM tbl_borrower WHERE cardNo = ?", new Object[] { cardNo });
+	}
+	
+ 
 
 	@Override
 	public List<Borrower> extractData(ResultSet rs) throws SQLException {
-		BookLoansDAO bldao = new BookLoansDAO(conn);
+		//BookLoansDAO bldao = new BookLoansDAO(conn);
 
 		List<Borrower> borrowers = new ArrayList<>();
 		while (rs.next()) {
@@ -100,13 +108,15 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 			b.setPhone(rs.getString("phone"));
 			b.setAddress(rs.getString("address"));
 
-			b.setBookLoans(bldao.readAllFirstLevel("SELECT * FROM tbl_book_loans WHERE cardNo = ?)",
-					new Object[] { b.getCardNo() }));
+			/*b.setBookLoans(bldao.readAllFirstLevel("SELECT * FROM tbl_book_loans WHERE cardNo = ?)",
+					new Object[] { b.getCardNo() }));*/
 
 			borrowers.add(b);
 		}
 		return borrowers;
 	}
+	
+	 
 
 	@Override
 	public List<Borrower> extractDataFirstLevel(ResultSet rs) throws SQLException {

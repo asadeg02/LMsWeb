@@ -9,12 +9,12 @@ public class Borrower implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int cardNo;
+	private Integer cardNo;
 	private String name;
 	private String address;
 	private String phone;
 	
-	private List<BookLoans> bookLoans;
+	/*private List<BookLoans> bookLoans;
 	
 	 
 	public List<BookLoans> getBookLoans() {
@@ -22,11 +22,11 @@ public class Borrower implements Serializable{
 	}
 	public void setBookLoans(List<BookLoans> bookLoans) {
 		this.bookLoans = bookLoans;
-	}
+	}*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		Integer result = 1;
 		result = prime * result + cardNo;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
@@ -51,10 +51,10 @@ public class Borrower implements Serializable{
 	}
 	
 	
-	public int getCardNo() {
+	public Integer getCardNo() {
 		return cardNo;
 	}
-	public void setCardNo(int cardNo) {
+	public void setCardNo(Integer cardNo) {
 		this.cardNo = cardNo;
 	}
 	public String getName() {
