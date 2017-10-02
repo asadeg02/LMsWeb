@@ -10,12 +10,12 @@ public class LibraryBranch implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int branchId;
+	private Integer branchId;
 	private String branchName;
 	private String branchAddress;
 	private List<Book> books;
 	
-	public int getBranchId() {
+	public Integer getBranchId() {
 		return branchId;
 	}
 	public void setBranchId(int branchId) {

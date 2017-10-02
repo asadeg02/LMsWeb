@@ -81,6 +81,11 @@ public abstract class BaseDAO<T> {
 	}
 
 	public List<T> readAll(String sql, Object[] vals) throws SQLException {
+		
+		if(getPageNo()!=null){
+		Integer index = (getPageNo() -1) * getPageSize();
+		sql+= " LIMIT "+index+","+getPageSize();
+		}
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		if (vals != null) {
 			int count = 1;

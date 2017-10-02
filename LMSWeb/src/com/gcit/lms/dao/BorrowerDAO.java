@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gcit.lms.entity.Borrower;
- 
+import com.gcit.lms.entity.Publisher;
 
 public class BorrowerDAO extends BaseDAO<Borrower> {
 
@@ -18,19 +18,19 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 	public void saveBorrower(Borrower borrower) throws SQLException {
 
 		if (borrower.getAddress() == null && borrower.getPhone() == null)
-			save("INSERT INTO tbl_borrower (cardNo, name) VALUES (?,?)",
+			save("INSERT INTO tbl_borrower (cardNo,name) VALUES (?)",
 					new Object[] { borrower.getCardNo(), borrower.getName() });
 
 		else if (borrower.getAddress() == null)
-			save("INSERT INTO tbl_borrower (cardNo, name, phone) VALUES (?,?,?)",
+			save("INSERT INTO tbl_borrower ( cardNo,name, phone) VALUES (?,?)",
 					new Object[] { borrower.getCardNo(), borrower.getName(), borrower.getPhone() });
 
 		else if (borrower.getPhone() == null)
-			save("INSERT INTO tbl_borrower ( cardNo, name, address) VALUES (?,?,?)",
+			save("INSERT INTO tbl_borrower ( cardNo,name, address) VALUES (?,?,?)",
 					new Object[] { borrower.getCardNo(), borrower.getName(), borrower.getAddress() });
 
 		else
-			save("INSERT INTO tbl_borrower ( cardNo, name, address,phone) VALUES (?,?,?,?)", new Object[] {
+			save("INSERT INTO tbl_borrower ( cardNo,name, address,phone) VALUES (?,?,?)", new Object[] {
 					borrower.getCardNo(), borrower.getName(), borrower.getAddress(), borrower.getPhone() });
 	}
 
@@ -45,9 +45,15 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 				save("UPDATE tbl_borrower SET name = ?, address = ?  WHERE cardNo = ?",
 						new Object[] { borrower.getName(), borrower.getAddress(), borrower.getCardNo() });
 
-			else if (borrower.getAddress() == null)
+			else if (borrower.getAddress() == null) {
 				save("UPDATE tbl_borrower SET name = ?, phone = ?  WHERE cardNo = ?",
 						new Object[] { borrower.getName(), borrower.getPhone(), borrower.getCardNo() });
+				System.out.println("all");
+			} else {
+				save("UPDATE tbl_borrower SET phone = ?, name =?, address =?  WHERE cardNo = ?", new Object[] {
+						borrower.getPhone(), borrower.getName(), borrower.getAddress(), borrower.getCardNo() });
+				System.out.println("all");
+			}
 		}
 
 		else {
@@ -88,17 +94,15 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 
 		return readAll("SELECT * FROM tbl_borrower WHERE phone =  ?", new Object[] { phone });
 	}
-	
+
 	public List<Borrower> readBorrowerByPK(int cardNo) throws SQLException {
-		
+
 		return readAll("SELECT * FROM tbl_borrower WHERE cardNo = ?", new Object[] { cardNo });
 	}
-	
- 
 
 	@Override
 	public List<Borrower> extractData(ResultSet rs) throws SQLException {
-		//BookLoansDAO bldao = new BookLoansDAO(conn);
+		// BookLoansDAO bldao = new BookLoansDAO(conn);
 
 		List<Borrower> borrowers = new ArrayList<>();
 		while (rs.next()) {
@@ -108,15 +112,16 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 			b.setPhone(rs.getString("phone"));
 			b.setAddress(rs.getString("address"));
 
-			/*b.setBookLoans(bldao.readAllFirstLevel("SELECT * FROM tbl_book_loans WHERE cardNo = ?)",
-					new Object[] { b.getCardNo() }));*/
+			/*
+			 * b.setBookLoans(bldao.
+			 * readAllFirstLevel("SELECT * FROM tbl_book_loans WHERE cardNo = ?)", new
+			 * Object[] { b.getCardNo() }));
+			 */
 
 			borrowers.add(b);
 		}
 		return borrowers;
 	}
-	
-	 
 
 	@Override
 	public List<Borrower> extractDataFirstLevel(ResultSet rs) throws SQLException {
@@ -134,4 +139,28 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 		}
 		return borrowers;
 	}
+
+	public Integer getBorrowerCount() throws SQLException {
+		return getCount("SELECT count(*) as COUNT FROM tbl_borrower", null);
+	}
+
+	public List<Borrower> readBorrowers(String name, Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		if (name != null && !name.isEmpty()) {
+			name = "%" + name + "%";
+			return readAll("SELECT * FROM tbl_borrower WHERE name like ?", new Object[] { name });
+		} else {
+			return readAll("SELECT * FROM tbl_borrower", null);
+		}
+
+	}
+
+	public Borrower readBorrowerByPK(Integer cardNo) throws SQLException {
+		List<Borrower> borrowers = readAll("SELECT * FROM tbl_borrower WHERE cardNo = ?", new Object[] { cardNo });
+		if (borrowers != null) {
+			return borrowers.get(0);
+		}
+		return null;
+	}
+
 }

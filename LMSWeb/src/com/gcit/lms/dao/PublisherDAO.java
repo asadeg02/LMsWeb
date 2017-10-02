@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Publisher;
 
 public class PublisherDAO extends BaseDAO<Publisher> {
@@ -38,19 +39,26 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 
 	public Integer savePublisherID(Publisher publisher) throws SQLException {
 
-		if (publisher.getPublisherAddress() == null && publisher.getPublisherPhone() == null)
+		if (publisher.getPublisherAddress() == null && publisher.getPublisherPhone() == null) {
+			System.out.println("only name");
 			return saveWithID("INSERT INTO tbl_publisher (publisherName) VALUES (?)",
 					new Object[] { publisher.getPublisherName() });
+			
+			
+		}
 
-		else if (publisher.getPublisherAddress() == null)
+		else if (publisher.getPublisherAddress() == null) {
+			System.out.println("only name phone");
 			return saveWithID("INSERT INTO tbl_publisher (publisherName,publisherPhone) VALUES (?,?)",
-					new Object[] { publisher.getPublisherName(), publisher.getPublisherPhone() });
+					new Object[] { publisher.getPublisherName(), publisher.getPublisherPhone() });}
 
-		else if (publisher.getPublisherPhone() == null)
+		else if (publisher.getPublisherPhone() == null) {
+			System.out.println("only name address");
 			return saveWithID("INSERT INTO tbl_publisher (publisherName,publisherAddress) VALUES (?,?)",
-					new Object[] { publisher.getPublisherName(), publisher.getPublisherAddress() });
+					new Object[] { publisher.getPublisherName(), publisher.getPublisherAddress() });}
 
 		else
+			System.out.println("all");
 			return saveWithID(
 					"INSERT INTO tbl_publisher (publisherName,publisherAddress,publisherPhone) VALUES (?,?,?)",
 					new Object[] { publisher.getPublisherName(), publisher.getPublisherAddress(),
@@ -117,7 +125,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 			p.setPublisherAddress(rs.getString("publisherAddress"));
 			p.setPublisherPhone(rs.getString("publisherPhone"));
 			p.setBooks(bdao.readAllFirstLevel(
-					"SELECT * FROM tbl_book WHERE bookId IN (SELECT bookId FROM tbl_book WHERE publisherId = ?)",
+					"SELECT * FROM tbl_book WHERE bookId IN (SELECT bookId FROM tbl_book WHERE pubId = ?)",
 					new Object[] { p.getPublisherId() }));
 
 			publishers.add(p);
@@ -139,5 +147,29 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 		}
 		return publishers;
 	}
+	
+	public Integer getPublisherCount() throws SQLException {
+		return getCount("SELECT count(*) as COUNT FROM tbl_publisher", null);
+	}
+	
+	public List<Publisher> readPublishers(String publisherName, Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		if( publisherName !=null && !publisherName.isEmpty()){
+			publisherName = "%"+publisherName+"%";
+			return readAll("SELECT * FROM tbl_publisher WHERE publisherName like ?", new Object[]{publisherName});
+		}else{
+			return readAll("SELECT * FROM tbl_publisher", null);
+		}
+		
+	}
+	
+	public Publisher readPublisherByPK(Integer publisherId) throws SQLException {
+		List<Publisher> publishers = readAll("SELECT * FROM tbl_publisher WHERE publisherId = ?", new Object[]{publisherId});
+		if(publishers!=null){
+			return publishers.get(0);
+		}
+		return null;
+	}
+	
 
 }

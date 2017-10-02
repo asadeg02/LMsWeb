@@ -31,7 +31,7 @@ public class AuthorDAO extends BaseDAO<Author> {
 	
 	
 	public List<Author> readAuthors(String authorName, Integer pageNo) throws SQLException {
-		//setPageNo(pageNo);
+		setPageNo(pageNo);
 		if(authorName !=null && !authorName.isEmpty()){
 			authorName = "%"+authorName+"%";
 			return readAll("SELECT * FROM tbl_author WHERE authorName like ?", new Object[]{authorName});

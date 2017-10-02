@@ -12,7 +12,7 @@
 		<tr>
 			<td><a href="updatelibrary.jsp">Update Details Of The Library </a></td>
 		</tr>
-		<tr>
+		"WebContent/librarian2.jsp"<tr>
 			<td><a href="addcopies.jsp">Add Copies of Book To The Branch</a></td>
 		</tr>
 		 

@@ -5,16 +5,16 @@
 			<td><a href="author.jsp">Author Services</a></td>
 		</tr>
 		<tr>
-			<td><a href="book.html">Book Services</a></td>
+			<td><a href="book.jsp">Book Services</a></td>
 		</tr>
 		<tr>
-			<td><a href="book.html">Borrower Services</a></td>
+			<td><a href="adminborrower.jsp">Borrower Services</a></td>
 		</tr>
 		<tr>
-			<td><a href="book.html">Branch Services</a></td>
+			<td><a href="branch.jsp">Branch Services</a></td>
 		</tr>
 		<tr>
-			<td><a href="book.html">Publisher Services</a></td>
+			<td><a href="publisher.jsp">Publisher Services</a></td>
 		</tr>
 	</table>
 </div>

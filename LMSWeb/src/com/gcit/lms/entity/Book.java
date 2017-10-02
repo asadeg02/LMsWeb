@@ -9,6 +9,15 @@ public class Book implements Serializable {
 
 	private Integer bookId;
 	private String title;
+	private Integer pubId;
+	public Integer getPubId() {
+		return pubId;
+	}
+
+	public void setPubId(Integer pubId) {
+		this.pubId = pubId;
+	}
+
 	private Publisher publisher;
 	private List<Author> authors;
 	private List<Genre> genres;

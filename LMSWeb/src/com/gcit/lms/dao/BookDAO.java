@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.LibraryBranch;
 import com.gcit.lms.entity.Publisher;
 
 public class BookDAO extends BaseDAO<Book> {
@@ -17,7 +18,7 @@ public class BookDAO extends BaseDAO<Book> {
 	}
 
 	public void saveBook(Book book) throws SQLException {
-		save("INSERT INTO tbl_book (bookName) VALUES (?)", new Object[] { book.getTitle() });
+		save("INSERT INTO tbl_book (title) VALUES (?)", new Object[] { book.getTitle() });
 	}
 
 	public void saveBookAuthor(Book book) throws SQLException {
@@ -27,11 +28,20 @@ public class BookDAO extends BaseDAO<Book> {
 	}
 
 	public Integer saveBookID(Book book) throws SQLException {
-		return saveWithID("INSERT INTO tbl_book (bookName) VALUES (?)", new Object[] { book.getTitle() });
+		return saveWithID("INSERT INTO tbl_book (title) VALUES (?)", new Object[] { book.getTitle() });
 	}
 
 	public void updateBook(Book book) throws SQLException {
-		save("UPDATE tbl_book SET bookName = ? WHERE bookId = ?", new Object[] { book.getTitle(), book.getBookId() });
+		save("UPDATE tbl_book SET title = ? WHERE bookId = ?", new Object[] { book.getTitle(), book.getBookId() });
+	}
+	
+	public void updateBook1(Book book) throws SQLException {
+		save("UPDATE tbl_book SET title = ?, pubId = ? WHERE bookId = ?", new Object[] { book.getTitle(), book.getPubId(), book.getBookId() });
+	}
+	
+
+	public void updatePubId(Book book) throws SQLException {
+		save("UPDATE tbl_book SET pubId = ? WHERE bookId = ?", new Object[] { book.getPubId(), book.getBookId() });
 	}
 
 	public void deleteBook(Book book) throws SQLException {
@@ -94,5 +104,28 @@ public class BookDAO extends BaseDAO<Book> {
 			books.add(b);
 		}
 		return books;
+	}
+	
+	public Integer getBookCount() throws SQLException {
+		return getCount("SELECT count(*) as COUNT FROM tbl_library_branch", null);
+	}
+	
+	public List<Book> readBooks(String name, Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		if( name !=null && !name.isEmpty()){
+			 name = "%"+name+"%";
+			return readAll("SELECT * FROM tbl_book_branch WHERE title like ?", new Object[]{name});
+		}else{
+			return readAll("SELECT * FROM tbl_book", null);
+		}
+		
+	}
+	
+	public Book readBookByPK(Integer bookId) throws SQLException {
+		List<Book> books = readAll("SELECT * FROM tbl_library_branch WHERE bookId = ?", new Object[]{bookId});
+		if(books!=null){
+			return books.get(0);
+		}
+		return null;
 	}
 }

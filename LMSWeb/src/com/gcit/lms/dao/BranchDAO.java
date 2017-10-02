@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gcit.lms.entity.Borrower;
 import com.gcit.lms.entity.LibraryBranch;
 
 public class BranchDAO extends BaseDAO<LibraryBranch> {
@@ -146,5 +147,28 @@ public class BranchDAO extends BaseDAO<LibraryBranch> {
 	public List<LibraryBranch> readBranch() throws SQLException {
 
 		return readAll("SELECT * FROM tbl_library_branch", null);
+	}
+	
+	public Integer getBranchCount() throws SQLException {
+		return getCount("SELECT count(*) as COUNT FROM tbl_library_branch", null);
+	}
+	
+	public List<LibraryBranch> readBranches(String name, Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		if( name !=null && !name.isEmpty()){
+			 name = "%"+name+"%";
+			return readAll("SELECT * FROM tbl_library_branch WHERE name like ?", new Object[]{name});
+		}else{
+			return readAll("SELECT * FROM tbl_library_branch", null);
+		}
+		
+	}
+	
+	public LibraryBranch readBranchByPK(Integer branchId) throws SQLException {
+		List<LibraryBranch> branches = readAll("SELECT * FROM tbl_library_branch WHERE branchId = ?", new Object[]{branchId});
+		if(branches!=null){
+			return branches.get(0);
+		}
+		return null;
 	}
 }
