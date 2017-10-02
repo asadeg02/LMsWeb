@@ -1,10 +1,12 @@
 <%@include file="include.html"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.gcit.lms.entity.Book"%>
+<%@page import="com.gcit.lms.entity.Genre"%>
 <%@page import="java.util.List"%>
 <%@page import="com.gcit.lms.service.AdminService"%>
 <%AdminService service = new AdminService();
 List<Book> books = service.readBooks();
+
 %>
 <div class="container">
 	<h2>Add New Author</h2>

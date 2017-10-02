@@ -2,22 +2,30 @@ package com.gcit.lms.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookDAO;
+import com.gcit.lms.dao.BookLoansDAO;
 import com.gcit.lms.dao.BorrowerDAO;
 import com.gcit.lms.dao.BranchDAO;
+import com.gcit.lms.dao.GenreDAO;
 import com.gcit.lms.dao.PublisherDAO;
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.BookLoans;
 import com.gcit.lms.entity.LibraryBranch;
 import com.gcit.lms.entity.Publisher;
 import com.gcit.lms.entity.Borrower;
+import com.gcit.lms.entity.Genre;
 
 public class AdminService {
 
 	public Utilities util = new Utilities();
+	//public static Integer chosenBranch;
+	public static List<Book> books = new ArrayList<>();
+	public static Borrower borrower;
 
 	public void saveAuthor(Author author) throws SQLException {
 		Connection conn = null;
@@ -377,6 +385,27 @@ public class AdminService {
 		}
 
 	}
+	
+	public void updateBook2(Book book) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+
+			bdao.updateBook2(book);
+
+			conn.commit();
+            System.out.println("updateBook2");
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+	}
 
 	public Borrower readBorrowerByPK(Integer cardNo) throws SQLException {
 		Connection conn = null;
@@ -662,5 +691,148 @@ public class AdminService {
 			}
 		}
 	}
+	
+	public List<Author> readAuthors() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAuthors(null);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return null;
+	}
+	
+	public List<Publisher> readPublishers() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.readAllPublishers();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return null;
+	}
+	
+	public List<Genre> readGenres() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readGenres(null);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+
+		return null;
+	}
+	
+	public void saveBookAuthor(Integer bookId, Integer authorId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			bdao.saveBookAuthor(bookId, authorId);
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	public void saveBookGenre(Integer genreId, Integer bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			bdao.saveBookGenre(genreId, bookId);
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	public List<BookLoans> readBookLoansByBranch( int branchId) throws SQLException {
+		Connection conn = null;
+		System.out.println("readby branch");
+		try {
+			conn = util.getConnection();
+			BookLoansDAO bdao = new BookLoansDAO(conn);
+			return bdao.readBookLoansByBranch(branchId); 
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		// System.out.println("arezoo 20");
+
+		return null;
+	}
+	
+	public List<BookLoans> readBookLoansByBranchBook( int bookId,int branchId) throws SQLException {
+		Connection conn = null;
+		System.out.println("readby branch");
+		try {
+			conn = util.getConnection();
+			BookLoansDAO bdao = new BookLoansDAO(conn);
+			return bdao.readBookLoansByBranchBook(bookId, branchId);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		// System.out.println("arezoo 20");
+
+		return null;
+	}
+	
+	public void updateBookLoans(BookLoans bl) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookLoansDAO bdao = new BookLoansDAO(conn);
+			bdao.updateBookLoans(bl);
+			 
+			conn.commit();
+			// System.out.println("after commit");
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
 
 }

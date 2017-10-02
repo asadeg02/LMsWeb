@@ -99,15 +99,22 @@ public class BookLoansDAO extends BaseDAO<BookLoans> {
 
 	}
 
-	public List<BookLoans> readBookLoansByPK(int cardNo, int branchId) throws SQLException {
-		return readAll("SELECT * FROM tbl_book_loans WHERE cardNo = ? AND branchId = ?",
-				new Object[] { cardNo, branchId });
+	public List<BookLoans> readBookLoansByBranchBook(int bookId, int branchId) throws SQLException {
+		return readAll("SELECT * FROM tbl_book_loans WHERE bookId = ? AND branchId = ?",
+				new Object[] { bookId, branchId });
 
 	}
 
 	public List<BookLoans> readBookLoansByPK(int cardNo, int branchId, int bookId) throws SQLException {
 		return readAll("SELECT * FROM tbl_book_loans WHERE cardNo = ? AND branchId = ? AND bookId = ?",
 				new Object[] { cardNo, branchId , bookId});
+
+	}
+	
+	public List<BookLoans> readBookLoansByBranch(int branchId) throws SQLException {
+		System.out.println("lowlevel");
+		return readAll("SELECT * FROM tbl_book_loans WHERE branchId = ? ",
+				new Object[] { branchId });
 
 	}
 

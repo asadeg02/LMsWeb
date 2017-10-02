@@ -2,6 +2,7 @@ package com.gcit.lms.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.lms.entity.Author;
 import com.gcit.lms.entity.Book;
+import com.gcit.lms.entity.BookLoans;
 import com.gcit.lms.entity.Borrower;
 import com.gcit.lms.entity.LibraryBranch;
 import com.gcit.lms.entity.Publisher;
@@ -23,7 +25,8 @@ import com.gcit.lms.service.LibrarianService;
  */
 @WebServlet({ "/addAuthor", "/deleteAuthor", "/editAuthor", "/pageAuthors", "/pagePublishers", "/editPublisher",
 		"/deletePublisher", "/addPublisher", "/pageBorrowers", "/editBorrower", "/deleteBorrower", "/addBorrower",
-		"/pageBranches", "/editBranch", "/deleteBranch" ,"/addBranch", "/pageBooks", "/deleteBook"})
+		"/pageBranches", "/editBranch", "/deleteBranch", "/addBranch", "/pageBooks", "/deleteBook", "/addBook",
+		"/overRide", "/overRide2", "/submitDue" })
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -58,11 +61,11 @@ public class AdminServlet extends HttpServlet {
 		case "/deleteBorrower":
 			redirectUrl = deleteBorrower(request, response, redirectUrl);
 			break;
-			
+
 		case "/deleteBranch":
 			redirectUrl = deleteBranch(request, response, redirectUrl);
 			break;
-			
+
 		case "/deleteBook":
 			redirectUrl = deleteBook(request, response, redirectUrl);
 			break;
@@ -78,7 +81,7 @@ public class AdminServlet extends HttpServlet {
 		case "/pageBranches":
 			redirectUrl = pageBranches(request, response, redirectUrl);
 			break;
-			
+
 		case "/pageBooks":
 			redirectUrl = pageBooks(request, response, redirectUrl);
 			break;
@@ -119,22 +122,38 @@ public class AdminServlet extends HttpServlet {
 			redirectUrl = addPublisher(request, redirectUrl);
 			break;
 
+		case "/addBook":
+			redirectUrl = addBook(request, redirectUrl);
+			break;
+
 		case "/addBorrower":
 			redirectUrl = addBorrower(request, redirectUrl);
 			break;
-			
+
 		case "/addBranch":
 			redirectUrl = addBranch(request, redirectUrl);
 			break;
 
-		 case "/editBorrower":
-		 redirectUrl = editBorrower(request, response, redirectUrl);
-		 break;
+		case "/editBorrower":
+			redirectUrl = editBorrower(request, response, redirectUrl);
+			break;
 
 		case "/editBranch":
 			redirectUrl = editBranch(request, response, redirectUrl);
 			break;
 
+		case "/overRide":
+			redirectUrl = overRide(request, response, redirectUrl);
+			break;
+
+		case "/overRide2":
+			redirectUrl = overRide2(request, response, redirectUrl);
+			break;
+			
+		case "/submitDue":
+			redirectUrl = submitDue(request, response, redirectUrl);
+			break;	
+		 
 		default:
 			break;
 		}
@@ -533,9 +552,9 @@ public class AdminServlet extends HttpServlet {
 		// System.out.println(lb.getBranchName());
 		// System.out.println(lb.getBranchAddress());
 
-		if ((request.getParameter("name") == null || request.getParameter("name").isEmpty()) 
-				&& (request.getParameter("address") == null || request.getParameter("address").isEmpty()) 
-				&& (request.getParameter("phone") == null || request.getParameter("phone").isEmpty()) ) {
+		if ((request.getParameter("name") == null || request.getParameter("name").isEmpty())
+				&& (request.getParameter("address") == null || request.getParameter("address").isEmpty())
+				&& (request.getParameter("phone") == null || request.getParameter("phone").isEmpty())) {
 
 			redirectUrl = "editborrower.jsp";
 			message = "you have not entered anything!";
@@ -556,7 +575,7 @@ public class AdminServlet extends HttpServlet {
 		request.setAttribute("statusMessage", message);
 		return redirectUrl;
 	}
-	
+
 	private String deleteBranch(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
 			throws ServletException, IOException {
 
@@ -582,7 +601,7 @@ public class AdminServlet extends HttpServlet {
 
 		return null;
 	}
-	
+
 	private String addBranch(HttpServletRequest request, String redirectUrl) {
 		LibraryBranch lb = new LibraryBranch();
 		String message = "Branch added Sucessfully";
@@ -593,15 +612,11 @@ public class AdminServlet extends HttpServlet {
 		if (request.getParameter("address") != null && !request.getParameter("address").isEmpty())
 			lb.setBranchAddress(request.getParameter("address"));
 
-				
-		 
 		System.out.println(lb.getBranchName());
 		System.out.println(lb.getBranchAddress());
-		 
 
 		if ((request.getParameter("name") == null || request.getParameter("name").isEmpty())
-				&& (request.getParameter("address") == null || request.getParameter("address").isEmpty()))
-				  {
+				&& (request.getParameter("address") == null || request.getParameter("address").isEmpty())) {
 
 			redirectUrl = "addbranch.jsp";
 			message = "You have not entered anything";
@@ -622,7 +637,7 @@ public class AdminServlet extends HttpServlet {
 		request.setAttribute("statusMessage", message);
 		return redirectUrl;
 	}
-	
+
 	private String pageBooks(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
 			throws ServletException, IOException {
 		if (request.getParameter("pageNo") != null) {
@@ -665,4 +680,176 @@ public class AdminServlet extends HttpServlet {
 		return null;
 	}
 
+	private String addBook(HttpServletRequest request, String redirectUrl) {
+		Book book = new Book();
+		String message = null;
+		redirectUrl = null;
+		Integer bookId = null;
+
+		if (request.getParameter("title") != null && !request.getParameter("title").isEmpty()) {
+
+			try {
+				book.setTitle(request.getParameter("title"));
+				bookId = adminService.saveBookId(book);
+				book.setBookId(bookId);
+
+				if (request.getParameter("publisherId") != null && !request.getParameter("publisherId").isEmpty()) {
+					book.setPubId(Integer.parseInt(request.getParameter("publisherId")));
+					System.out.println("pubId" + book.getPubId());
+					adminService.updateBook2(book);
+				}
+
+				if (request.getParameter("authorId") != null && !request.getParameter("authorId").isEmpty()) {
+					for (String authorId : request.getParameterValues("authorId"))
+						adminService.saveBookAuthor(bookId, Integer.parseInt(authorId));
+
+				}
+
+				if (request.getParameter("genreId") != null && !request.getParameter("genreId").isEmpty()) {
+					for (String genreId : request.getParameterValues("genreId"))
+						adminService.saveBookGenre(bookId, Integer.parseInt(genreId));
+
+				}
+				message = "Book Inserted Successfully";
+				redirectUrl = "addbook.jsp";
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			message = "feild Title cannot be empty";
+			redirectUrl = "addbook.jsp";
+		}
+
+		request.setAttribute("statusMessage", message);
+		return redirectUrl;
+	}
+
+	private String overRide2(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
+			throws ServletException, IOException {
+
+		String message = null;
+		// System.out.println(request.getParameter("branchIds") +" branchId");
+
+		if (request.getParameter("bookIds") != null && !request.getParameter("bookIds").isEmpty()) {
+			System.out.println("arezoo1");
+
+			redirectUrl = "override3.jsp";
+			try {
+
+				int bookId = Integer.parseInt(request.getParameter("bookIds"));
+				int branchId = Integer.parseInt(request.getParameter("branchIds"));
+				Book book = adminService.readBookByPK(bookId);
+				LibraryBranch branch = adminService.readBranchByPK(branchId);
+				List<BookLoans> bookloans = adminService.readBookLoansByBranchBook(bookId, branchId);
+
+				System.out.println("arezoo2");
+
+				int cardNo = bookloans.get(0).getCardNo();
+				System.out.println("arezoo3");
+
+				Borrower borrower = adminService.readBorrowerByPK(cardNo);
+				AdminService.borrower = borrower;
+				
+				message = "You Want To Overide Duedate For Librarybranch: " + branch.getBranchName() + " And Book: "
+						+ book.getTitle() + " And Borrower: " + borrower.getName();
+
+				//System.out.println("arezoo1");
+
+			} catch (NumberFormatException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			message = "you have to choose a book";
+			redirectUrl = "override2.jsp";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectUrl;
+	}
+	
+	private String overRide(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
+			throws ServletException, IOException {
+
+		String message = null;
+		// System.out.println(request.getParameter("branchIds") +" branchId");
+
+		if (request.getParameter("branchIds") != null && !request.getParameter("branchIds").isEmpty()) {
+			System.out.println("arezoo1");
+
+			redirectUrl = "override2.jsp";
+			try {
+
+				//int bookId = Integer.parseInt(request.getParameter("bookIds"));
+				int branchId = Integer.parseInt(request.getParameter("branchIds"));
+				List<BookLoans> bookloans = adminService.readBookLoansByBranch( branchId);
+
+				System.out.println("arezoo2");
+
+
+
+				System.out.println("arezoo3");
+				for(BookLoans bl: bookloans) {
+
+				Book book = adminService.readBookByPK(bl.getBookId());
+				AdminService.books.add(book);
+				 
+				//System.out.println("arezoo4");
+
+				//System.out.println("arezoo1");
+				}
+
+			} catch (NumberFormatException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			message = "you have to choose a book";
+			redirectUrl = "override2.jsp";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectUrl;
+	}
+	
+	///////////////////
+	private String submitDue(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
+			throws ServletException, IOException {
+
+		String message = null;
+		// System.out.println(request.getParameter("branchIds") +" branchId");
+
+		if (request.getParameter("dueDate") != null && !request.getParameter("dueDate").isEmpty()) {
+			System.out.println("arezoo1");
+
+			redirectUrl = "override.jsp";
+			try {
+
+				int bookId = Integer.parseInt(request.getParameter("bookIds"));
+				int branchId = Integer.parseInt(request.getParameter("branchIds"));
+				int cardNo = AdminService.borrower.getCardNo();
+				String dueDate = request.getParameter("dueDate");
+				BookLoans bl = new BookLoans();
+				bl.setBookId(bookId);
+				bl.setBranchId(branchId);
+				bl.setCardNo(cardNo);
+				bl.setDueDate(dueDate);
+				
+				adminService.updateBookLoans(bl);
+
+				//System.out.println("arezoo2");
+				//System.out.println("arezoo3");
+				message = "DueDate Successfully overRiden";
+				redirectUrl = "override.jsp";
+
+			} catch (NumberFormatException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			message = "you have to enter a new dueDate";
+			redirectUrl = "override3.jsp";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectUrl;
+	}
 }
